@@ -115,6 +115,7 @@ class InstaPy:
                  bypass_suspicious_attempt=False,
                  bypass_with_mobile=False,
                  multi_logs=True,
+                 log_handler=None,
                  split_db=False):
 
         cli_args = parse_cli_args()
@@ -301,14 +302,14 @@ class InstaPy:
         Settings.show_logs = show_logs or None
         self.multi_logs = multi_logs
         self.logfolder = get_logfolder(self.username, self.multi_logs)
-        self.logger = self.get_instapy_logger(self.show_logs)
+        self.logger = self.get_instapy_logger(self.show_logs, log_handler)
 
         get_database(make=True)  # IMPORTANT: think twice before relocating
 
         if self.selenium_local_session is True:
             self.set_selenium_local_session()
 
-    def get_instapy_logger(self, show_logs):
+    def get_instapy_logger(self, show_logs, log_handler=None):
         """
         Handles the creation and retrieval of loggers to avoid
         re-instantiation.
@@ -330,6 +331,9 @@ class InstaPy:
                 datefmt='%Y-%m-%d %H:%M:%S')
             file_handler.setFormatter(logger_formatter)
             logger.addHandler(file_handler)
+
+            if log_handler:
+                logger.addHandler(log_handler)
 
             if show_logs is True:
                 console_handler = logging.StreamHandler()
