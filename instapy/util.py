@@ -942,7 +942,7 @@ def get_relationship_counts(browser, username, logger):
     except WebDriverException:
         try:
             followers_count = format_number(
-                browser.find_element_by_xpath(read_xpath(get_relationship_counts.__name__,"followers_count")).text)
+                browser.find_element_by_xpath(str(read_xpath(get_relationship_counts.__name__,"followers_count"))))
         except NoSuchElementException:
             try:
                 browser.execute_script("location.reload()")
@@ -983,7 +983,7 @@ def get_relationship_counts(browser, username, logger):
     except WebDriverException:
         try:
             following_count = format_number(
-                browser.find_element_by_xpath(read_xpath(get_relationship_counts.__name__,"following_count")).text)
+                browser.find_element_by_xpath(str(read_xpath(get_relationship_counts.__name__,"following_count"))))
 
         except NoSuchElementException:
             try:
@@ -1762,9 +1762,10 @@ def get_action_delay(action):
     config = Settings.action_delays
 
     if (not config or
+            action not in config or
             config["enabled"] is not True or
             config[action] is None or
-            isinstance(config[action], (int, float))):
+            isinstance(config[action], (int, float)) is not True):
         return defaults[action]
 
     else:
